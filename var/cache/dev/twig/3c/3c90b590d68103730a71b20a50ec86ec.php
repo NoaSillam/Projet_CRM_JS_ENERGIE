@@ -173,6 +173,6 @@ class __TwigTemplate_8f17fc40496a736b40b10813fe45b48f extends Template
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, name: 'time', status: status_color }) }}
 {% endblock %}
-", "@WebProfiler/Collector/memory.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/symfony/web-profiler-bundle/Resources/views/Collector/memory.html.twig");
+", "@WebProfiler/Collector/memory.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/symfony/web-profiler-bundle/Resources/views/Collector/memory.html.twig");
     }
 }

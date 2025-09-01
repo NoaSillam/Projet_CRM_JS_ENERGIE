@@ -168,6 +168,6 @@ class __TwigTemplate_c0c743661fff5775390ef9cac82c7524 extends Template
 {% block panel %}
     {{ render(controller('web_profiler.controller.router::panelAction', { token: token })) }}
 {% endblock %}
-", "@WebProfiler/Collector/router.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/symfony/web-profiler-bundle/Resources/views/Collector/router.html.twig");
+", "@WebProfiler/Collector/router.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/symfony/web-profiler-bundle/Resources/views/Collector/router.html.twig");
     }
 }

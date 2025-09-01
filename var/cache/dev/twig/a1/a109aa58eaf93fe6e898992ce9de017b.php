@@ -1724,6 +1724,6 @@ $context["voter_detail"], "vote", [], "array", false, false, false, 483) == Twig
         </div>
     {% endif %}
 {% endblock %}
-", "@Security/Collector/security.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/symfony/security-bundle/Resources/views/Collector/security.html.twig");
+", "@Security/Collector/security.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/symfony/security-bundle/Resources/views/Collector/security.html.twig");
     }
 }

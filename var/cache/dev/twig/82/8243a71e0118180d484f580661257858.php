@@ -1733,6 +1733,6 @@ $context["log"], "type", [], "any", false, false, false, 459))) ? ("silenced") :
         {% endif %}
     </div>
 {% endmacro %}
-", "@WebProfiler/Collector/logger.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/symfony/web-profiler-bundle/Resources/views/Collector/logger.html.twig");
+", "@WebProfiler/Collector/logger.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/symfony/web-profiler-bundle/Resources/views/Collector/logger.html.twig");
     }
 }

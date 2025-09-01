@@ -609,6 +609,6 @@ class __TwigTemplate_f7944fbd15b31e5ad14562ae69b85322 extends Template
         </div>
     {% endif %}
 {% endblock %}
-", "@WebProfiler/Collector/twig.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/symfony/web-profiler-bundle/Resources/views/Collector/twig.html.twig");
+", "@WebProfiler/Collector/twig.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/symfony/web-profiler-bundle/Resources/views/Collector/twig.html.twig");
     }
 }

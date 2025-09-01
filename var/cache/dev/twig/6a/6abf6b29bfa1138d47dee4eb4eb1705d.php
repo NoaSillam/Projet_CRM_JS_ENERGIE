@@ -1850,6 +1850,6 @@ class __TwigTemplate_cb2b46aa2d2d9a4682bd6b1e30b0535d extends Template
         </tbody>
     </table>
 {% endmacro %}
-", "@Doctrine/Collector/db.html.twig", "/Applications/MAMP/htdocs/CRM/CRM_project_1/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
+", "@Doctrine/Collector/db.html.twig", "/Users/noasillam/Documents/GitHub/Projet_CRM_JS_ENERGIE/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
     }
 }
