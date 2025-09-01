@@ -1,0 +1,14 @@
+<div style="margin: auto; width: 30%;">
+    <div style="margin-left:auto; margin-right:auto;">
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+        <br>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+
+                <button type="submit" style="margin-left: 54%;" class="btn btn-primary" >{{ button_label|default('Save') }}</button>
+            </div>
+        </div>
+{{ form_end(form) }}
+    </div>
+</div>

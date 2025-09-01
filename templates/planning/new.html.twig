@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Planning{% endblock %}
+
+{% block body %}
+    <h1 style="text-align: center;">Prendre un rendez-vous</h1>
+<br>
+    {{ include('planning/_form.html.twig') }}
+
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjM-UuAFh4AsGzHLlsRTAf1oMTzh1yAfI&libraries=places&callback=initAutocomplete" async defer></script>
+    <script>
+        function initAutocomplete() {
+            const addressInput = document.querySelector('.autocomplete-address');
+            if (addressInput) {
+                const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                    componentRestrictions: { country: 'fr' } // Limiter à la France
+                });
+            }
+        }
+    </script>
+    {% if form.vars.errors|length > 0 %}
+        <div class="modal fade show" id="errorModal" tabindex="-1" role="dialog" style="display: block;" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-danger">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Erreur lors de la création du planning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeModal()" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul>
+                            {% for error in form.vars.errors %}
+                                <li>{{ error.message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+        <script>
+            function closeModal() {
+                document.getElementById('errorModal').style.display = 'none';
+                document.querySelector('.modal-backdrop').remove();
+            }
+        </script>
+
+
+    {% endif %}
+
+
+
+{% endblock %}
+
+
+

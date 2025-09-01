@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning{% endblock %}
+
+{% block body %}
+    <br>
+    <a href="{{ path('app_planning_index') }}" class="btn btn-dark" style="margin-left:3%;">Retour</a>
+    <a href="{{ path('app_planning_edit', {'id': planning.id}) }}" class="btn btn-warning" style="margin-left:40%; color: white;">Edit</a>
+    {{ include('planning/_delete_form.html.twig') }}
+    <br>
+    <h1 style="text-align: center;">Planning</h1>
+    <div style="margin: auto; width: 80%;">
+        <div style="margin-left:auto; margin-right:auto;">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>Nom</th>
+                    <td>{{ planning.idLead.nomComplet }}</td>
+                </tr>
+                <tr>
+                    <th>Adresse</th>
+                    <td>{{ planning.adresse }}</td>
+                </tr>
+                <tr data-planning-id="{{ planning.id }}">
+                    <th>Commentaire</th>
+                    <td data-field="commentaire" contenteditable="true">{{ planning.commentaire | striptags }}</td>
+                </tr>
+                <tr data-planning-id="{{ planning.id }}">
+                    <th>Date</th>
+                    <td data-field="date">
+                        <input type="date" class="date-input" value="{{ planning.date ? planning.date|date('Y-m-d') : '' }}">
+                        <input type="time" class="time-input" value="{{ planning.date ? planning.date|date('H:i') : '' }}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <input type="hidden" name="_token" value="{{ csrf_token('edit-inline-user') }}">
+
+    <script>
+        document.querySelectorAll('[data-field="date"]').forEach(cell => {
+            const dateInput = cell.querySelector('.date-input');
+            const timeInput = cell.querySelector('.time-input');
+
+            const saveDateTime = () => {
+                const dateValue = dateInput.value.trim();
+                const timeValue = timeInput.value.trim();
+
+                if (dateValue && timeValue) {
+                    const [hours, minutes] = timeValue.split(':');
+                    const localDateTime = new Date(`${dateValue}T${hours}:${minutes}:00`);
+                    const isoDateValue = new Date(localDateTime.getTime() - localDateTime.getTimezoneOffset() * 60000).toISOString();
+
+                    const planningId = cell.closest('tr').dataset.planningId;
+                    const csrfToken = document.querySelector('input[name="_token"]').value;
+
+                    fetch(`/planning/${planningId}/edit-inline-user`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            field: 'date',
+                            value: isoDateValue
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    console.error('Failed to update date. Response:', text);
+                                    alert('Failed to update date');
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                } else {
+                    console.warn('Date or time input is empty.');
+                }
+            };
+
+            dateInput.addEventListener('blur', saveDateTime);
+            timeInput.addEventListener('blur', saveDateTime);
+
+            cell.addEventListener('dblclick', function() {
+                dateInput.focus();
+            });
+        });
+
+        // Add functionality for the comment field
+        document.querySelectorAll('[data-field="commentaire"]').forEach(cell => {
+            const saveComment = () => {
+                const commentValue = cell.textContent.trim();
+                const planningId = cell.closest('tr').dataset.planningId;
+                const csrfToken = document.querySelector('input[name="_token"]').value;
+
+                fetch(`/planning/${planningId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: 'commentaire',
+                        value: commentValue
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                console.error('Failed to update comment. Response:', text);
+                                alert('Failed to update comment');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            };
+
+            cell.addEventListener('blur', saveComment);
+            cell.addEventListener('dblclick', function() {
+                cell.setAttribute('contenteditable', 'true');
+                cell.focus();
+            });
+        });
+    </script>
+{% endblock %}

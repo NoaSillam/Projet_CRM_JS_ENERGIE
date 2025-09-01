@@ -1,0 +1,361 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lead index{% endblock %}
+    {% block stylesheets %}
+    <!-- Place for additional stylesheets -->
+    <style>
+    .highlight-fluo {
+    background-color: #ff00ff; /* Rose fluo */
+    color: #ffffff; /* Texte blanc pour le contraste */
+}
+
+    </style>
+    {% endblock %}
+
+
+{% block body %}
+<br>
+    <h1 style="text-align: center;">Historique de Lead de {{ app.user.prenom }}</h1>
+    <br>
+<div class="d-flex justify-content-between mb-3">
+    <a href="{{ path('upload_excel') }}" class="btn btn-primary" style="visibility: hidden;">Importer une lead</a>
+    <form method="post" action="{{ path('app_lead_change_status_all') }}" onsubmit="return confirm('Are you sure you want to change the status of all items?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('change_status_all') }}">
+        <button type="submit" class="btn btn-warning" style="visibility: hidden;">Change Status of All Leads</button>
+    </form>
+</div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id enregistrement</th>
+                <th>Heure de creation</th>
+                <th>Nom complet</th>
+                <th>Telephone</th>
+                <th>Chauffage</th>
+                <th>Departement</th>
+                <th>Commentaire</th>
+                <th>Ajouter au Google Agenda</th>
+           
+            </tr>
+        </thead>
+        <tbody>
+        {% for lead in leads %}
+            <tr data-lead-id="{{ lead.id }}" >
+                <td contenteditable="true" data-field="idEnregistrement" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %} {% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %}">{{ lead.idEnregistrement }}</td>
+                <td contenteditable="true" data-field="heureCreation" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %}">{{ lead.heureCreation ? lead.heureCreation|date('Y-m-d H:i:s') : '' }}</td>
+                <td contenteditable="true" data-field="nomComplet" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">{{ lead.nomComplet }}</td>
+                <td contenteditable="true" data-field="telephone" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %} background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">0{{ lead.telephone }}</td>
+                <td contenteditable="true" data-field="chauffage" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">{{ lead.chauffage }}</td>
+                <td contenteditable="true" data-field="departement" style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">{{ lead.departement }}</td>
+                <td style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %}  background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">
+                    <span class="commentaire-display" data-field="commentaire">{{ lead.commentaire ? lead.commentaire : 'N/A' }}</span>
+                    <select class="commentaire-select d-none">
+                        <option value="">Choisir un commentaire</option>
+                        <option value="faux numero" {% if lead.commentaire == 'faux numero' %}selected{% endif %}>faux numero</option>
+                        <option value="rappel" {% if lead.commentaire starts with 'rappel' %}selected{% endif %}>rappel</option>
+                        <option value="pas interesser" {% if lead.commentaire == 'pas interesser' %}selected{% endif %}>pas interesser</option>
+                        <option value="rendez vous" {% if lead.commentaire == 'rendez vous' %}selected{% endif %}>rendez vous</option>
+                        <option value="NRP" {% if lead.commentaire == 'NRP' %}selected{% endif %}>NRP</option>
+                        <option value="NRP X 2" {% if lead.commentaire == 'NRP X 2' %}selected{% endif %}>NRP X 2</option>
+                        <option value="NRP X 3" {% if lead.commentaire == 'NRP X 3' %}selected{% endif %}>NRP X 3</option>
+                        <option value="NRP X 4" {% if lead.commentaire == 'NRP X 4' %}selected{% endif %}>NRP X 4</option>
+                        <option value="NRP += 5" {% if lead.commentaire == 'NRP += 5' %}selected{% endif %}>NRP += 5</option>
+                    </select>
+                    <textarea class="commentaire-text d-none" rows="3">{{ lead.commentaire }}</textarea>
+                    <!-- Formulaire pour choisir une date et une heure, caché par défaut -->
+                    <div class="rappel-form d-none">
+                        <label for="rappel-date">Date:</label>
+                        <input type="date" id="rappel-date" name="rappelDate">
+                        <label for="rappel-time">Heure:</label>
+                        <input type="time" id="rappel-time" name="rappelTime">
+                        <button type="button" class="save-rappel-btn">Save</button>
+                    </div>
+                </td>
+
+                <td style="{% if lead.commentaire == 'faux numero' %} background-color: #ff00ff; color: #ffffff; {% endif %} {% if lead.commentaire starts with 'pas interesser' %} background-color: #FF0000; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rappel' %}  background-color: #87CEEB; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'rendez vous' %}  background-color: #00FF00; color: #ffffff; {% endif %}{% if lead.commentaire starts with 'NRP' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 2' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 3' %} background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP X 4' %}  background-color: #fdfd96; color: #000000; {% endif %}{% if lead.commentaire starts with 'NRP += 5' %}  background-color: #FFA500; color: #ffffff; {% endif %} ">
+                    {% if lead.commentaire starts with 'rappel' %}
+                        {% set parts = lead.commentaire|split(' ', 2) %}
+                        {% if parts|length > 1 %}
+                            {% set dateTime = parts[1] %}
+
+                            {# Création des variables de date/heure au format correct #}
+                            {% set startDate = dateTime|date('Ymd\THi00') %}
+                            {% set endDate = dateTime|date_modify('+30 minutes')|date('Ymd\THi00') %}
+
+                            {# Remplacement de 'UTC' par 'T' dans le format des dates #}
+                            {% set startDateFormatted = startDate|replace({'UTC': 'T'}) %}
+                            {% set endDateFormatted = endDate|replace({'UTC': 'T'}) %}
+
+                            {% set description = 'Rappel pour ' ~ lead.nomComplet ~ ', Téléphone: 0' ~ lead.telephone %}
+
+                            {# Création du lien Google Agenda avec le bon format #}
+                            {% set googleCalendarUrl = 'https://calendar.google.com/calendar/u/0/r/eventedit?text=Rappel&dates=' ~ startDateFormatted ~ '/' ~ endDateFormatted ~ '&details=' ~ description|url_encode %}
+                            <a href="{{ googleCalendarUrl }}" target="_blank" class="btn btn-success">Ajouter au Google Agenda</a>
+                        {% else %}
+                            <span class="text-danger">Date et heure manquantes</span>
+                        {% endif %}
+
+                    {% elseif lead.getPlannings()|length > 0 %}
+                        {% if lead.getCommentaire() == 'rendez vous' %}
+                            <a href="{{ path('app_planning_for_lead', {'leadId': lead.id}) }}" class="btn btn-primary">Voir le rendez-vous</a>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted" style="color: grey!important; ">Aucune action</span>
+                    {% endif %}
+
+
+                </td>
+               
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+   
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('[contenteditable]').forEach(cell => {
+            cell.addEventListener('dblclick', function() {
+                this.setAttribute('contenteditable', 'true');
+                this.focus();
+            });
+
+            cell.addEventListener('blur', function() {
+                this.setAttribute('contenteditable', 'false');
+                let leadId = this.closest('tr').dataset.leadId;
+                let field = this.dataset.field;
+                let value = this.textContent;
+                let csrfToken = document.querySelector('input[name="_token"]').value;
+
+                console.log('Sending data:', { field, value });
+
+                fetch(`/lead/${leadId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: value
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Failed to update field');
+                        }
+                    });
+            });
+        });
+
+        document.querySelectorAll('.telepro').forEach(span => {
+            span.addEventListener('dblclick', function() {
+                let select = this.nextElementSibling;
+                select.classList.remove('d-none');
+                select.focus();
+                this.classList.add('d-none');
+            });
+        });
+
+        document.querySelectorAll('.telepro-select').forEach(select => {
+            select.addEventListener('change', function() {
+                let span = this.previousElementSibling;
+                let leadId = this.closest('tr').dataset.leadId;
+                let field = 'telepro';
+                let value = this.value;
+                let csrfToken = document.querySelector('input[name="_token"]').value;
+
+                console.log('Sending data:', { field, value });
+
+                fetch(`/lead/${leadId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: value
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Failed to update field');
+                        } else {
+                            span.textContent = this.options[this.selectedIndex].textContent;
+                            span.classList.remove('d-none');
+                            this.classList.add('d-none');
+                        }
+                    });
+            });
+        });
+
+        document.querySelectorAll('.commentaire-display').forEach(span => {
+            span.addEventListener('dblclick', function() {
+                let select = this.nextElementSibling;
+                let textarea = select.nextElementSibling;
+                let rappelForm = textarea.nextElementSibling;
+                select.classList.remove('d-none');
+                textarea.classList.remove('d-none');
+                rappelForm.classList.add('d-none');
+                select.focus();
+                this.classList.add('d-none');
+            });
+        });
+
+        document.querySelectorAll('.commentaire-select').forEach(select => {
+            select.addEventListener('change', function() {
+                let span = this.previousElementSibling;
+                let textarea = this.nextElementSibling;
+                let rappelForm = textarea.nextElementSibling;
+                let leadId = this.closest('tr').dataset.leadId;
+                let field = 'commentaire';
+                let value = this.value;
+                let csrfToken = document.querySelector('input[name="_token"]').value;
+
+                console.log('Sending data:', { field, value });
+
+                fetch(`/lead/${leadId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: value
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Failed to update field');
+                        } else {
+                            span.textContent = value;
+                            textarea.value = value;
+                            if (value === 'rappel') {
+                                rappelForm.classList.remove('d-none');
+                            } else {
+                                rappelForm.classList.add('d-none');
+                            }
+                            span.classList.remove('d-none');
+                            this.classList.add('d-none');
+                            textarea.classList.add('d-none');
+
+                            if (value === 'rendez vous') {
+                                localStorage.setItem('redirectToPlanning', leadId);  // Stocker l'ID du lead
+                            } else {
+                                localStorage.removeItem('redirectToPlanning');
+                            }
+
+                            // Recharge la page
+                            location.reload();
+
+                        }
+                    });
+            });
+        });
+
+        {#document.addEventListener('DOMContentLoaded', function() {#}
+        {#    let leadId = localStorage.getItem('redirectToPlanning');#}
+        {#    if (leadId) {#}
+        {#        localStorage.removeItem('redirectToPlanning'); // Nettoie l'indicateur#}
+        {#        setTimeout(function() {#}
+        {#            // Redirection avec pré-remplissage du formulaire#}
+        {#            window.location.href = "{{ path('app_planning_new_lead', { 'leadId': 'REPLACE_LEAD_ID' }) }}".replace('REPLACE_LEAD_ID', leadId);#}
+        {#        }, 2000);  // Délai de 2 secondes avant la redirection#}
+        {#    }#}
+        {#});#}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let leadId = localStorage.getItem('redirectToPlanning');
+            if (leadId) {
+                localStorage.removeItem('redirectToPlanning'); // Nettoie l'indicateur
+                setTimeout(function() {
+                    // Redirection avec pré-remplissage du formulaire
+                    let redirectUrl = "{{ path('app_planning_new_lead', { 'leadId': 'REPLACE_LEAD_ID' }) }}".replace('REPLACE_LEAD_ID', leadId);
+                    window.location.href = redirectUrl;
+                }, 2000);  // Délai de 2 secondes avant la redirection
+            }
+        });
+
+
+
+
+        document.querySelectorAll('.commentaire-text').forEach(textarea => {
+            textarea.addEventListener('blur', function() {
+                let span = this.previousElementSibling;
+                let select = span.previousElementSibling;
+                let rappelForm = this.nextElementSibling;
+                let leadId = this.closest('tr').dataset.leadId;
+                let field = 'commentaire';
+                let value = this.value;
+                let csrfToken = document.querySelector('input[name="_token"]').value;
+
+                console.log('Sending data:', { field, value });
+
+                fetch(`/lead/${leadId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: value
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Failed to update field');
+                        } else {
+                            span.textContent = value;
+                            select.value = value;
+                            span.classList.remove('d-none');
+                            select.classList.add('d-none');
+                            this.classList.add('d-none');
+                            rappelForm.classList.add('d-none');
+                            location.reload();
+                        }
+                    });
+            });
+        });
+
+        document.querySelectorAll('.save-rappel-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                let rappelForm = this.closest('.rappel-form');
+                let leadId = this.closest('tr').dataset.leadId;
+                let rappelDate = rappelForm.querySelector('#rappel-date').value;
+                let rappelTime = rappelForm.querySelector('#rappel-time').value;
+                let csrfToken = document.querySelector('input[name="_token"]').value;
+
+                let rappelValue = `rappel ${rappelDate} ${rappelTime}`;
+
+                fetch(`/lead/${leadId}/edit-inline-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: 'commentaire',
+                        value: rappelValue
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            alert('Failed to update field');
+                        } else {
+                            location.reload();
+                        }
+                    });
+            });
+        });
+    </script>
+{% endblock %}

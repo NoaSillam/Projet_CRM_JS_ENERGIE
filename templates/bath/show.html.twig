@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bath{% endblock %}
+
+{% block body %}
+    <h1>Bath</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ bath.id }}</td>
+            </tr>
+            <tr>
+                <th>PieceIdentite</th>
+                <td>{{ bath.pieceIdentite }}</td>
+            </tr>
+            <tr>
+                <th>LivretFamille</th>
+                <td>{{ bath.livretFamille }}</td>
+            </tr>
+            <tr>
+                <th>AvisImpots</th>
+                <td>{{ bath.avisImpots }}</td>
+            </tr>
+            <tr>
+                <th>TaceFonciere</th>
+                <td>{{ bath.taceFonciere }}</td>
+            </tr>
+            <tr>
+                <th>PreconisationTravaux</th>
+                <td>{{ bath.preconisationTravaux }}</td>
+            </tr>
+            <tr>
+                <th>Dpe</th>
+                <td>{{ bath.dpe }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ bath.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ bath.prenom }}</td>
+            </tr>
+            <tr>
+                <th>CodePostal</th>
+                <td>{{ bath.codePostal }}</td>
+            </tr>
+            <tr>
+                <th>Departement</th>
+                <td>{{ bath.departement }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ bath.telephone }}</td>
+            </tr>
+            <tr>
+                <th>Revenu</th>
+                <td>{{ bath.revenu }}</td>
+            </tr>
+            <tr>
+                <th>MetreCarre</th>
+                <td>{{ bath.metreCarre }}</td>
+            </tr>
+            <tr>
+                <th>Menage</th>
+                <td>{{ bath.menage }}</td>
+            </tr>
+            <tr>
+                <th>Isolation</th>
+                <td>{{ bath.isolation }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_bath_index') }}">back to list</a>
+
+    <a href="{{ path('app_bath_edit', {'id': bath.id}) }}">edit</a>
+
+    {{ include('bath/_delete_form.html.twig') }}
+{% endblock %}

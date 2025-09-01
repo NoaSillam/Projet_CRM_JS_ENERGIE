@@ -1,0 +1,922 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning index{% endblock %}
+
+{% block body %}
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: visible;
+        }
+
+        .no-limit-container {
+            width: 100%;
+            padding: 0 15px;
+        }
+
+        table {
+            width: 100%;
+            table-layout: auto;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        th, td {
+            white-space: nowrap;
+        }
+    </style>
+
+    <br>
+    <h1 style="text-align: center;">Planning index</h1>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a href="{{ path('app_planning_new') }}" class="btn btn-primary" style="margin-left: 15px;">Créer un nouveau planning</a>
+    </div>
+
+    <div class="no-limit-container">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Technicien</th>
+                <th>Statut de RDV</th>
+                <th>Date</th>
+                <th>Nom et prénom</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
+                <th>Chauffage</th>
+                <th>Conso</th>
+                <th>Age MR et MME</th>
+                <th>Superficie</th>
+                <th>Situation</th>
+                <th>Nbr pers. à charge</th>
+                <th>Revenu fiscal</th>
+                <th>Crédit en cours</th>
+                <th>Situation pro</th>
+                <th>Commentaire</th>
+                <th>Télépro</th>
+                <th colspan="30"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set sortedPlannings = plannings|sort((a, b) => a.date <=> b.date) %}
+            {% set currentWeek = '' %}
+
+            {% for planning in sortedPlannings %}
+                {% set week = planning.date|date('o-W') %}
+
+                {% if week != currentWeek %}
+                    <tr><td colspan="30" style="height: 40px;"></td></tr>
+                    <tr>
+                        <td colspan="30" style="background-color: #f0f0f0; font-weight: bold;">
+                            📅 Semaine du {{ planning.date|date('d/m/Y') }} (Semaine {{ planning.date|date('W') }})
+                        </td>
+                    </tr>
+                    <tr><td colspan="30" style="height: 40px;"></td></tr>
+                    {% set currentWeek = week %}
+                {% endif %}
+
+                <tr data-lead-id="{{ planning.id }}">
+                    <td>
+                        <span class="telepro" data-field="telepro">
+                            {{ planning.idLead.technicien ? planning.idLead.technicien.prenom ~ ' , ' ~ planning.idLead.technicien.nom : 'Choisir à qui assigner la lead' }}
+                        </span>
+                        <select class="telepro-select d-none">
+                            <option value="">Choisir à qui assigner la lead</option>
+                            {% for tech in technicien %}
+                                <option value="{{ tech.id }}"
+                                        {% if planning.idLead.technicien and planning.idLead.technicien.id == tech.id %}selected{% endif %}>
+                                    {{ tech.prenom }}, {{ tech.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+
+                    <td>
+                        <span class="status" data-field="status">
+                            {{ planning.statusRDV|default('N/A') }}
+                        </span>
+                        <select class="status-select d-none">
+                            <option value="">Status</option>
+                            <option value="verifier si fenêtre fini">vérifier si fenêtre fini</option>
+                            <option value="verifier si homme présent">vérifier si homme présent</option>
+                            <option value="verifier si femme présent">vérifier si femme présent</option>
+                            <option value="replanifier">replanifier</option>
+                            <option value="a deja un devis">a déjà un devis</option>
+                            <option value="verifier si acte definitif">vérifier si acte définitif</option>
+                            <option value="verifier si proprietaire">vérifier si propriétaire</option>
+                            <option value="petite surface">petite surface</option>
+                            <option value="autre">autre</option>
+                        </select>
+                        <input type="text" class="autre-comment d-none" placeholder="Précisez si 'autre' sélectionné">
+                    </td>
+
+{#                    <td>#}
+{#                         <span class="editable-date" data-field="date">#}
+{#                            {{ planning.date ? planning.date|date('d/m/y \\à H\\hi') : '' }}#}
+{#                        </span>#}
+{#                        <input type="datetime-local"#}
+{#                               class="editable-date-input d-none"#}
+{#                               value="{{ planning.date ? planning.date|date('Y-m-d\\TH:i') : '' }}">#}
+{#                    </td>#}
+{#                    <td>#}
+{#                    <span class="editable-date" data-field="date">#}
+{#                         {{ planning.date ? planning.date|date('d/m/y \\à H\\hi') : '' }}#}
+{#                    </span>#}
+{#                        <input type="datetime-local"#}
+{#                               class="editable-date-input d-none"#}
+{#                               value="{{ planning.date ? planning.date|date('Y-m-d\\TH:i') : '' }}">#}
+{#                    </td>#}
+
+
+
+                    <td>
+    <span class="editable-date" data-field="date">
+        {{ planning.date ? planning.date|date('d/m/Y à H\\hi') : '' }}
+    </span>
+                        <input type="datetime-local"
+                               class="editable-date-input d-none"
+                               value="{{ planning.date ? planning.date|date('Y-m-d\\TH:i') : '' }}">
+                    </td>
+
+                    <td>
+
+                        <span class="editable" data-field="nomComplet">{{ planning.idLead.nomComplet|default('N/A') }}</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.idLead.nomComplet|default('') }}">
+                    </td>
+                    <td>
+                        <span class="editable" data-field="telephone">{{ planning.telephone }}</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.telephone }}">
+                    </td>
+                    <td>
+                        <span class="editable" data-field="adresse">{{ planning.adresse }}</span>
+                        <input type="text" style="width: 450px;" class="editable-input editable-address-input d-none autocomplete-address" value="{{ planning.adresse }}">
+                    </td>
+                    <td>
+                        <span class="type-chauffage" data-field="TypeChauffage">{{ planning.TypeChauffage }}</span>
+                        <select class="type-chauffage-select d-none">
+                            <option>Bois</option>
+                            <option>Bois + Elec</option>
+                            <option>Bois + Gaz</option>
+                            <option>Charbon</option>
+                            <option>Chauffage</option>
+                            <option>Elec</option>
+                            <option>Fioul</option>
+                            <option>Fioul + Bois</option>
+                            <option>Fioul + Bois + Elec</option>
+                            <option>Fioul + Elec</option>
+                            <option>Gaz</option>
+                            <option>Gaz + Bois</option>
+                            <option>Gaz + Elec</option>
+                            <option>Gaz + Pac</option>
+                            <option>Pac</option>
+                            <option>Pac +Bois</option>
+                            <option>Peler</option>
+                            <option>combustible</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <span class="editable" data-field="consommationAnnuelOuMensuelle">{{ planning.consommationAnnuelOuMensuelle }}</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.consommationAnnuelOuMensuelle }}">
+                    </td>
+
+                    <td>
+                        <span class="editable" data-field="ageMRMME">{{ planning.ageMRMME }}</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.ageMRMME }}">
+                    </td>
+
+
+                    <td>
+                        <span class="editable" data-field="superficieMaison">{{ planning.superficieMaison }}M2</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.superficieMaison }}">
+                    </td>
+
+                    <td>
+                        <span class="situation" data-field="situationFamiliale">{{ planning.situationFamiliale }}</span>
+                        <select class="situation-select d-none">
+                            <option>Célibataire</option>
+                            <option>Marié(e)</option>
+                            <option>Pacsé(e)</option>
+                            <option>Divorcé(e)</option>
+                            <option>Veuf / Veuve</option>
+                            <option>En couple</option>
+                            <option>Autre</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <span class="editable" data-field="nbrePersonneCharge">{{ planning.nbrePersonneCharge }}</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.nbrePersonneCharge }}">
+                    </td>
+
+                    <td>
+                        <span class="editable" data-field="RevenuFiscalReference">{{ planning.RevenuFiscalReference }}€</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.RevenuFiscalReference }}">
+                    </td>
+
+                    <td>
+                        <span>IMMO </span>
+                        <span class="editable" data-field="creditEnCours" data-value="{{ planning.creditEnCours ?? '' }}">
+        {{ planning.creditEnCours ?? '0' }}
+    </span>
+                        <span>€</span>
+                        <input type="text" class="editable-input d-none" value="{{ planning.creditEnCours ?? '' }}">
+                    </td>
+
+
+
+
+                    <td>
+                        <span class="situation-pro" data-field="situationPro">{{ planning.situationPro }}</span>
+                        <select class="situation-pro-select d-none">
+                            <option value="">-- Sélectionner --</option>
+                            <option>CDI 1 et CDD 1</option>
+                            <option>CDI les 2</option>
+                            <option>CDD 1 et Chef d'entreprise 1</option>
+                            <option>CDD les 2</option>
+                            <option>Chef d'entreprise 1 et CDI 1</option>
+                            <option>Chef d'entreprise les 2</option>
+                            <option>CDI 1 et Sans emploi 1</option>
+                            <option>CDD 1 et Sans emploi 1</option>
+                            <option>Chef d'entreprise 1 et Sans emploi 1</option>
+                            <option>Sans emploi les 2</option>
+                            <option>CDI 1 et Retraité 1</option>
+                            <option>CDD 1 et Retraité 1</option>
+                            <option>Chef d'entreprise 1 et Retraité 1</option>
+                            <option>Sans emploi 1 et Retraité 1</option>
+                            <option>Retraité les 2</option>
+                            <option>CDI 1 et Étudiant 1</option>
+                            <option>CDD 1 et Étudiant 1</option>
+                            <option>Chef d'entreprise 1 et Étudiant 1</option>
+                            <option>Sans emploi 1 et Étudiant 1</option>
+                            <option>Étudiant les 2</option>
+                            <option>Autre</option>
+                        </select>
+                    </td>
+
+                    <td>
+                        <span class="editable editable-commentaire" data-field="commentaire">{{ planning.commentaire|striptags|replace({'&euro;': '€', '&eacute;': 'é'}) }}</span>
+                        <textarea class="editable-textarea d-none">{{ planning.commentaire|striptags|replace({'&euro;': '€', '&eacute;': 'é'}) }}</textarea>
+                    </td>
+
+                    <td>Télépro</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="30">Aucun planning trouvé</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjM-UuAFh4AsGzHLlsRTAf1oMTzh1yAfI&libraries=places"></script>
+    <script>
+
+        // Double-clic pour éditer le commentaire
+        document.querySelectorAll('.editable-commentaire').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const textarea = this.nextElementSibling;
+                textarea.value = this.textContent.trim();
+                textarea.classList.remove('d-none');
+                this.classList.add('d-none');
+                textarea.focus();
+            });
+        });
+
+        // Sauvegarde du commentaire
+        document.querySelectorAll('.editable-textarea').forEach(textarea => {
+            textarea.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.blur(); // Enregistre au blur
+                }
+            });
+
+            textarea.addEventListener('blur', function () {
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const newValue = this.value.trim();
+                const span = this.previousElementSibling;
+                const field = span.dataset.field;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Le commentaire ne peut pas être vide.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: newValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    } else {
+                        alert("Erreur lors de la mise à jour du commentaire.");
+                    }
+                });
+            });
+        });
+
+
+
+
+
+        // Double-clic pour éditer la situation pro
+        document.querySelectorAll('.situation-pro').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const select = this.nextElementSibling;
+                select.value = this.textContent.trim();
+                select.classList.remove('d-none');
+                this.classList.add('d-none');
+                select.focus();
+            });
+        });
+
+        // Sauvegarde de la situation pro
+        document.querySelectorAll('.situation-pro-select').forEach(select => {
+            select.addEventListener('change', function () {
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const newValue = this.value;
+                const span = this.previousElementSibling;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Veuillez choisir une situation professionnelle.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: 'situationPro',
+                        value: newValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    } else {
+                        alert("Erreur lors de la mise à jour de la situation pro.");
+                    }
+                });
+            });
+        });
+
+
+        document.querySelectorAll('.editable').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const cell = span.closest('td');
+                const input = cell.querySelector('.editable-input');
+
+                if (!input) return;
+
+                // valeur brute depuis data-value si présente, sinon textContent
+                const rawValue = span.dataset.value ?? span.textContent.trim();
+
+                input.value = rawValue;
+                input.classList.remove('d-none');
+                span.classList.add('d-none');
+                input.focus();
+            });
+        });
+
+
+
+
+
+
+        document.querySelectorAll('.editable').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const input = this.nextElementSibling;
+                input.value = this.textContent.trim();
+                input.classList.remove('d-none');
+                this.classList.add('d-none');
+                input.focus();
+            });
+        });
+
+
+
+        // Double-clic pour éditer la situation familiale
+        document.querySelectorAll('.situation').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const select = this.nextElementSibling;
+                select.value = this.textContent.trim(); // met la valeur actuelle
+                select.classList.remove('d-none');
+                this.classList.add('d-none');
+                select.focus();
+            });
+        });
+
+        // Sauvegarde de la situation familiale
+        document.querySelectorAll('.situation-select').forEach(select => {
+            select.addEventListener('change', function () {
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const newValue = this.value;
+                const span = this.previousElementSibling;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Veuillez choisir une situation.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: 'situationFamiliale',
+                        value: newValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    } else {
+                        alert("Erreur lors de la mise à jour de la situation.");
+                    }
+                });
+            });
+        });
+
+
+
+
+
+
+
+        // Double-clic pour afficher le select du TypeChauffage
+        document.querySelectorAll('.type-chauffage').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const select = this.nextElementSibling;
+                select.classList.remove('d-none');
+                this.classList.add('d-none');
+                select.focus();
+            });
+        });
+
+        // Sauvegarde du TypeChauffage à la sélection
+        document.querySelectorAll('.type-chauffage-select').forEach(select => {
+            select.addEventListener('change', function () {
+                const newValue = this.value;
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const span = this.previousElementSibling;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Veuillez choisir un type de chauffage.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: 'TypeChauffage',
+                        value: newValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    } else {
+                        alert("Erreur lors de la mise à jour du type de chauffage.");
+                    }
+                });
+            });
+        });
+
+
+
+        function initAddressAutocomplete(inputElement) {
+            if (inputElement && typeof google !== 'undefined') {
+                const autocomplete = new google.maps.places.Autocomplete(inputElement, {
+                    componentRestrictions: { country: 'fr' }
+                });
+            }
+        }
+
+        // Initialisation après chargement
+        document.querySelectorAll('.editable-address-input').forEach(initAddressAutocomplete);
+
+
+
+
+        document.querySelectorAll('.editable').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const input = this.nextElementSibling;
+                input.classList.remove('d-none');
+                this.classList.add('d-none');
+                input.focus();
+            });
+        });
+
+        document.querySelectorAll('.editable-input').forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') this.blur();
+            });
+
+
+            input.addEventListener('focusout', function () {
+                const row = this.closest('tr');
+                const cell = this.closest('td');
+                const leadId = row.dataset.leadId;
+                const newValue = this.value.trim();
+                const span = cell.querySelector('.editable');
+                const field = span.dataset.field;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Le champ ne peut pas être vide.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ field, value: newValue })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.dataset.value = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    }
+                });
+            });
+        });
+
+
+
+
+
+
+            document.querySelectorAll('.editable-date').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const input = this.nextElementSibling;
+                this.classList.add('d-none');
+                input.classList.remove('d-none');
+                input.focus();
+            });
+        });
+
+        document.querySelectorAll('.editable-date-input').forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') this.blur();
+            });
+
+            input.addEventListener('blur', function () {
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const span = this.previousElementSibling;
+                const field = span.dataset.field;
+                const newValue = this.value;
+
+                if (!newValue || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(newValue)) {
+                    alert("Veuillez entrer une date valide.");
+                    return;
+                }
+
+                const dateObj = new Date(newValue);
+                const formattedValue = dateObj.getFullYear() + '-' +
+                    String(dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(dateObj.getDate()).padStart(2, '0') + ' ' +
+                    String(dateObj.getHours()).padStart(2, '0') + ':' +
+                    String(dateObj.getMinutes()).padStart(2, '0') + ':00';
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: formattedValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = new Intl.DateTimeFormat('fr-FR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        }).format(dateObj).replace(',', ' à');
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    } else {
+                        alert("Erreur lors de l'enregistrement de la date.");
+                    }
+                });
+            });
+        });
+
+        // // Double-clic pour activer l'édition de la date
+        // document.querySelectorAll('.editable-date').forEach(span => {
+        //     span.addEventListener('dblclick', function () {
+        //         const input = this.nextElementSibling;
+        //         input.classList.remove('d-none');
+        //         this.classList.add('d-none');
+        //         input.focus();
+        //     });
+        // });
+        //
+        // // Enregistrer la date (blur ou Enter)
+        // document.querySelectorAll('.editable-date-input').forEach(input => {
+        //     input.addEventListener('keydown', function (e) {
+        //         if (e.key === 'Enter') this.blur();
+        //     });
+        //
+        //     input.addEventListener('blur', function () {
+        //         const row = this.closest('tr');
+        //         const leadId = row.dataset.leadId;
+        //         const span = this.previousElementSibling;
+        //         const field = span.dataset.field;
+        //         const newValue = this.value;
+        //
+        //         if (!newValue || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(newValue)) {
+        //             alert("Veuillez entrer une date valide.");
+        //             return;
+        //         }
+        //
+        //         const date = new Date(newValue);
+        //         const formattedValue = date.getFullYear() + '-' +
+        //             String(date.getMonth() + 1).padStart(2, '0') + '-' +
+        //             String(date.getDate()).padStart(2, '0') + ' ' +
+        //             String(date.getHours()).padStart(2, '0') + ':' +
+        //             String(date.getMinutes()).padStart(2, '0') + ':00';
+        //
+        //         const csrfToken = document.querySelector('input[name="_token"]')?.value;
+        //
+        //         fetch(`/planning/${leadId}/edit-inline-planning`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json',
+        //                 'X-CSRF-TOKEN': csrfToken
+        //             },
+        //             body: JSON.stringify({
+        //                 field: field,
+        //                 value: formattedValue
+        //             })
+        //         }).then(response => {
+        //             if (response.ok) {
+        //                 // Mise à jour de l'affichage utilisateur
+        //                 span.textContent = new Intl.DateTimeFormat('fr-FR', {
+        //                     day: '2-digit',
+        //                     month: '2-digit',
+        //                     year: '2-digit',
+        //                     hour: '2-digit',
+        //                     minute: '2-digit'
+        //                 }).format(date).replace(',', ' à');
+        //                 span.classList.remove('d-none');
+        //                 this.classList.add('d-none');
+        //             } else {
+        //                 alert("Erreur lors de l'enregistrement de la date.");
+        //             }
+        //         });
+        //     });
+        // });
+
+//        // Double-clic pour modifier la date
+//        document.querySelectorAll('.editable-date').forEach(span => {
+//            span.addEventListener('dblclick', function () {
+//                const input = this.nextElementSibling;
+//                this.classList.add('d-none');
+//                input.classList.remove('d-none');
+//                input.focus();
+//            });
+//        });
+//
+//        // Sauvegarde de la date (focusout ou Entrée)
+//        document.querySelectorAll('.editable-date-input').forEach(input => {
+//            input.addEventListener('keydown', function (e) {
+//                if (e.key === 'Enter') this.blur();
+//            });
+//
+//            input.addEventListener('blur', function () {
+//                const row = this.closest('tr');
+//                const leadId = row.dataset.leadId;
+//                const span = this.previousElementSibling;
+//                const field = span.dataset.field;
+//                const newValue = this.value;
+//
+//                if (!newValue) {
+//                    alert("Veuillez entrer une date.");
+//                    return;
+//                }
+//
+//                const formattedValue = newValue.replace('T', ' ') + ':00'; // Y-m-d H:i:s
+//                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+//
+//                fetch(`/planning/${leadId}/edit-inline-planning`, {
+//                    method: 'POST',
+//                    headers: {
+//                        'Content-Type': 'application/json',
+//                        'X-CSRF-TOKEN': csrfToken
+//                    },
+//                    body: JSON.stringify({
+//                        field: field,
+//                        value: formattedValue
+//                    })
+//                }).then(response => {
+//                    if (response.ok) {
+//                        const dateObj = new Date(newValue);
+//                        const frDate = dateObj.toLocaleDateString('fr-FR');
+//                        const frTime = dateObj.toLocaleTimeString('fr-FR', {
+//                            hour: '2-digit',
+//                            minute: '2-digit'
+//                        });
+//
+//                        span.textContent = `${frDate} à ${frTime}`;
+//                        this.classList.add('d-none');
+//                        span.classList.remove('d-none');
+//                    } else {
+//                        alert("Erreur lors de l'enregistrement de la date.");
+//                    }
+//                });
+//            });
+//        });
+
+
+        // Double-clic pour éditer un champ texte (comme nomComplet)
+        document.querySelectorAll('.editable').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const input = this.nextElementSibling;
+                input.classList.remove('d-none');
+                this.classList.add('d-none');
+                input.focus();
+            });
+        });
+
+        // Enregistrement sur perte de focus ou touche Entrée
+        document.querySelectorAll('.editable-input').forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    this.blur(); // déclenche le focusout
+                }
+            });
+
+            input.addEventListener('focusout', function () {
+                const row = this.closest('tr');
+                const leadId = row.dataset.leadId;
+                const newValue = this.value.trim();
+                const span = this.previousElementSibling;
+                const field = span.dataset.field;
+                const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                if (!newValue) {
+                    alert("Le champ ne peut pas être vide.");
+                    return;
+                }
+
+                fetch(`/planning/${leadId}/edit-inline-planning`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        field: field,
+                        value: newValue
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        span.textContent = newValue;
+                        span.classList.remove('d-none');
+                        this.classList.add('d-none');
+                    }
+                    // } else {
+                    //     alert("Erreur lors de la mise à jour du champ.");
+                    // }
+                });
+            });
+        });
+
+
+
+        // Double-clic pour activer le select
+            document.querySelectorAll('.status').forEach(span => {
+            span.addEventListener('dblclick', function () {
+                const select = this.nextElementSibling;
+                select.classList.remove('d-none');
+                select.focus();
+                this.classList.add('d-none');
+            });
+        });
+
+            // Gestion du select "autre"
+            document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', function () {
+                const row = this.closest('tr');
+                const span = this.previousElementSibling;
+                const input = row.querySelector('.autre-comment');
+                const value = this.value;
+
+                if (value === 'autre') {
+                    input.classList.remove('d-none');
+                    input.focus();
+                } else {
+                    const leadId = row.dataset.leadId;
+                    const csrfToken = document.querySelector('input[name="_token"]')?.value;
+
+                    // Si autre que "autre", on envoie directement
+                    fetch(`/planning/${leadId}/edit-inline-planning`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            field: 'status',
+                            value: value
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            span.textContent = this.options[this.selectedIndex].textContent;
+                            span.classList.remove('d-none');
+                            this.classList.add('d-none');
+                        } else {
+                            alert('Erreur lors de la mise à jour du statut.');
+                        }
+                    });
+                }
+            });
+        });
+
+            // Gestion de la saisie "autre" ➜ dans statusRDV
+            document.querySelectorAll('.autre-comment').forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    const row = this.closest('tr');
+                    const leadId = row.dataset.leadId;
+                    const valeurPerso = this.value.trim();
+                    const csrfToken = document.querySelector('input[name="_token"]')?.value;
+                    const span = row.querySelector('.status');
+                    const select = row.querySelector('.status-select');
+
+                    if (!valeurPerso) {
+                        alert("Veuillez entrer une valeur.");
+                        return;
+                    }
+
+                    fetch(`/planning/${leadId}/edit-inline-planning`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            field: 'status',
+                            value: valeurPerso
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            span.textContent = valeurPerso;
+                            span.classList.remove('d-none');
+                            select.classList.add('d-none');
+                            this.classList.add('d-none');
+                            this.value = ''; // reset input
+                        } else {
+                            alert("Erreur lors de l'enregistrement du statut personnalisé.");
+                        }
+                    });
+                }
+            });
+        });
+
+
+
+    </script>
+{% endblock %}

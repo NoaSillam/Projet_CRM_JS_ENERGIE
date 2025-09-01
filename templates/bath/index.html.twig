@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bath index{% endblock %}
+
+{% block body %}
+    <br>
+    <h1 style="text-align: center;">Bath th</h1>
+
+    <br>
+    <a href="{{ path('app_bath_new') }}" class="btn btn-secondary">Ajouter</a>
+    <br>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Code Postal</th>
+                <th>Departement</th>
+                <th>Telephone</th>
+                <th>Revenu</th>
+                <th>Metre Carre</th>
+                <th>Menage</th>
+                <th>Isolation</th>
+                <th>Piece Identite</th>
+                <th>Livret Famille</th>
+                <th>Avis Impots</th>
+                <th>Taxe Fonciere</th>
+                <th>Preconisation Travaux</th>
+                <th>Dpe</th>
+                <th>actions</th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {% for bath in baths %}
+            <tr>
+                <td>{{ bath.nom }}</td>
+                <td>{{ bath.prenom }}</td>
+                <td>{{ bath.codePostal }}</td>
+                <td>{{ bath.departement }}</td>
+                <td>{{ bath.telephone }}</td>
+                <td>{{ bath.revenu }}</td>
+                <td>{{ bath.metreCarre }}</td>
+                <td>{{ bath.menage }}</td>
+                <td>{{ bath.isolation }}</td>
+                <td>
+                    {% if bath.pieceIdentite %}
+                        <a href="{{ asset('assets/images/' ~ bath.pieceIdentite) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bath.livretFamille %}
+                        <a href="{{ asset('assets/images/' ~ bath.livretFamille) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bath.avisImpots %}
+                        <a href="{{ asset('assets/images/' ~ bath.avisImpots) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bath.taxeFonciere %}
+                        <a href="{{ asset('assets/images/' ~ bath.taxeFonciere) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bath.preconisationTravaux %}
+                        <a href="{{ asset('assets/images/' ~ bath.preconisationTravaux) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bath.dpe %}
+                        <a href="{{ asset('assets/images/' ~ bath.dpe) }}" class="btn btn-primary" target="_blank">Voir</a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
+
+                <td>
+                    <a href="{{ path('app_bath_show', {'id': bath.id}) }}">show</a>
+                    <a href="{{ path('app_bath_edit', {'id': bath.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="17">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Bath{% endblock %}
+
+{% block body %}
+    <h1>Edit Bath</h1>
+
+    {{ include('bath/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_bath_index') }}">back to list</a>
+
+    {{ include('bath/_delete_form.html.twig') }}
+{% endblock %}

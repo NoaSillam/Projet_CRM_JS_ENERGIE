@@ -1,0 +1,29 @@
+{# templates/planning/lead_plannings.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Plannings pour Lead: {{ lead.nomComplet }}</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Commentaire</th>
+            <th>Adresse</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for planning in plannings %}
+            <tr>
+                <td>{{ planning.date|date('Y-m-d H:i:s') }}</td>
+                <td>{{ planning.commentaire | striptags | replace({'&euro;': '€'})| replace({'&eacute;': 'é'})}}</td>
+                <td>{{ planning.adresse }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Aucun planning trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

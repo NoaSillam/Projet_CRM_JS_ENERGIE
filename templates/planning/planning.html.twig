@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning index{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                timeZone: 'local',
+                events: [
+                    {% set colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FF8333"] %}
+                    {% for planning in plannings %}
+                    {
+                        id: "{{ planning.id }}",
+                        title: "{{ planning.idLead ? planning.idLead.nomComplet | e('js') : 'N/A' }}",
+                        start: "{{ planning.date ? planning.date|date('Y-m-d\\TH:i:s') : '' }}",
+                        end: "{{ planning.date ? planning.date|date_modify('+2 hour')|date('Y-m-d\\TH:i:s') : '' }}",
+                        url: "{{ path('app_planning_show', {'id': planning.id}) }}",
+                        color: "{{ colors[loop.index0 % colors|length] }}",
+                        allDay: false,
+                        extendedProps: {
+                            adresse: "{{ planning.adresse | striptags | e('js') }}",
+                            commentaire: "{{ planning.commentaire | striptags | replace({'&euro;': '€'})| replace({'&eacute;': 'é'}) | e('js') }}"
+                        }
+                    }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                locale: 'fr',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '23:59:00',
+                nowIndicator: true,
+                navLinks: true,
+                editable: true,
+                eventLimit: true,
+                views: {
+                    timeGridWeek: {
+                        eventLimit: 6
+                    },
+                    dayGridMonth: {
+                        eventLimit: 4,
+                        displayEventTime: false
+                    }
+                },
+                eventContent: function(info) {
+                    var content = document.createElement('div');
+                    var title = document.createElement('div');
+                    var commentaireDiv = document.createElement('div');
+                    var commentaire = info.event.extendedProps.commentaire;
+
+                    if (info.view.type === 'dayGridMonth') {
+                        if (commentaire && commentaire.length > 15) {
+                            commentaire = commentaire.substring(0, 15) + '...';
+                        }
+                        title.textContent = info.event.title + ' - ' + commentaire;
+
+                        var colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FF8333"];
+                        var colorIndex = info.event._instance.range.start.getDate() % colors.length;
+                        content.style.backgroundColor = colors[colorIndex];
+                        content.style.padding = '5px';
+                        content.style.borderRadius = '3px';
+                        content.style.color = '#fff';
+                    } else {
+                        title.textContent = info.event.title;
+                        commentaireDiv.textContent = commentaire;
+                        commentaireDiv.style.fontSize = '0.9em';
+                        commentaireDiv.style.marginTop = '2px';
+                    }
+
+                    content.appendChild(title);
+                    content.appendChild(commentaireDiv);
+                    return { domNodes: [content] };
+                },
+                eventDrop: function(info) {
+                    var event = info.event;
+
+                    if (!event.id) {
+                        console.error('ID de l\'événement manquant');
+                        return;
+                    }
+
+                    var data = {
+                        id: event.id,
+                        start: event.start.toLocaleString('sv-SE', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(' ', 'T'),
+                        end: event.end ? event.end.toLocaleString('sv-SE', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(' ', 'T') : null
+                    };
+
+                    var url = '{{ path('app_planning_editplanning', {'id': 'ID_PLACEHOLDER'}) }}'.replace('ID_PLACEHOLDER', event.id);
+                    console.log(url);
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-Token': '{{ csrf_token('planning_update') }}'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error('La mise à jour a échoué');
+                        }
+                        return response.json();
+                    }).then(data => {
+                        console.log('Événement mis à jour avec succès');
+                    }).catch(error => {
+                        alert('Erreur lors de la mise à jour de l\'événement : ' + error.message);
+                        info.revert();
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+
+    </script>
+{% endblock %}
+
+{% block body %}
+    <h1 style="text-align: center;">Planning</h1>
+    <br>
+    <br>
+    <div id="calendar"></div>
+
+{#    <a href="{{ path('app_planning_new') }}">Create new</a>#}
+{% endblock %}

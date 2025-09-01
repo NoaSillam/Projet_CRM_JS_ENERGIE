@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Bath{% endblock %}
+
+{% block body %}
+    <h1 style="text-align: center;">Ajout Bath th</h1>
+
+    {{ include('bath/_form.html.twig') }}
+
+    <a href="{{ path('app_bath_index') }}">back to list</a>
+{% endblock %}
